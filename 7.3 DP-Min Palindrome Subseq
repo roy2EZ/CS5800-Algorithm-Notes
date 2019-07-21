@@ -1,0 +1,51 @@
+Palindrome
+Description
+ana
+aaaa
+banana -> b + anana 
+find the minimum palindromic subsequences for the word
+Recursion
+f(i) := min # of palindromes given A[1....i]
+f("banana") = min(
+    f("banan") + 1,
+    f("b") + 1, 
+    f("ban") + 1
+)
+f(i) = min(
+    f(i-1) + 1, if A[i] is palindrome
+    f(i-2) + 1, if A[i-1:i] is palindrome
+    f(i-3) + 1, ...
+    f(0) + 1, if A is a palindrome
+)
+Pseudocode
+// O n^3 time O n space -> O n^3 time to O n^2 time optimizing isPalindrome, O n space to O n^2
+int MinPalindrome(int[] A) {
+    int[] dp = new int[A.length+1];
+    for (int i = 1; i <= A.length; i++) {
+        dp[i] = i;
+        for (int j = 1; j < i; j++) {
+            if (isPalindrome(A.substring(j-1, i))) {
+                dp[i] = Math.min(dp[j-1]+1, dp[i]);
+            }
+        }
+    }
+    return dp[A.length];
+}
+
+/**
+base case g(i, i) = true
+g(i, i+1) = A[i] == A[i+1]
+g(i, j) = A[i] == A[j] && g(i+1,j-1)
+*/
+
+boolean isPalindrome(int[] A, int i, int j) {
+    boolean[][] p = new int[A.length][A.length];
+    for (int i = 0; i < A.length; i++) p[i][i] = true;
+    for (int i = 0; i < A.length-1; i++) p[i][i+1] = A[i] == A[i+1];
+    for (int col = 2; col < A.length; col++) {
+        for (int row = 0; row <= col-2; row++) {
+            p[row][col] = A[row] == A[col] && p[row+1][col-1];
+        }
+    }
+    return p[i][j]
+}
