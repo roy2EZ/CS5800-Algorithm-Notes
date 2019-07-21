@@ -1,0 +1,60 @@
+DFS
+DFS(G, u, visited[]) {
+    visited[u] = true;
+    // processing with u;
+    for (v in G.neighbors(u)) {
+        if (!visited[v]) {
+            DFS(G, v, visited);
+
+        }
+    }
+}
+Connected Components
+DFS_ALL(G) {
+    visited[1 ... n] = false;
+    cc[1 ... n] = 0;
+    cur = 1;
+    for (S = 1 ... n) {
+        if (!visited[s]) {
+            DFS(G, v, visited, cc, cur);
+            cur++;
+        }
+    }
+}
+Cycles
+// O 2^m time 
+// backtrack
+// we visite every possible path starting from the source node.
+DFS(G, u) {
+    visited[u] = true;
+    for (S = 1 ... n) {
+        if (!visited[s]) {
+            DFS(G, v, visited, cc, cur);
+            cur++;
+        } else {
+            return false;
+            }
+    }
+    visited[u] = false;
+}
+
+
+//better solution
+
+/**
+white: new vertex
+grey: on recursion call stack
+black: visited but not on call stack
+**/
+
+boolean DFS(G, u, color[]) {
+    color[u] = grey;
+    for (v in G.neighbors(u)) {
+        if (color[v] == white) {
+            DFS(G, v, color[]);
+        } else if(color[v] == grey) {
+            return false;
+        }
+    }
+    color[u] = black;
+}
