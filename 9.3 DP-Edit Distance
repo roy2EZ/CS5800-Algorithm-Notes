@@ -1,0 +1,58 @@
+Edit Distance
+Description
+Given str1 and str2, we can do insert, delete and replace, find the shortest operations we need to turn str1 to str2
+
+"abc" -> "abch"
+"abc" -> "ab"
+"abc" -> "abh"
+Solution
+Explanation
+f(i, j) = edit distance if given A[1:i] and B[1:j]
+
+
+  123456
+A apple
+B banana
+for apple -> banan, then we just need to insert an "a" to A, to get B. Thus the result is f(5, 6) = f(5, 5) + 1.
+For Insert, 
+f(i, j) = f(i, j-1) + 1
+
+for appl -> banana, then it's the same as apple -> bananae, thus we need to remove the extra e. 
+
+Thus for removal, =
+f(i, j) = f(i-1, j) + 1
+
+for appl -> banan, we just replace e to a, will solve the problem.
+For replace, f(i, j) = f(i-1, j-1) + 1
+
+
+f(i, j) = max(
+    f(i-1, j) + 1,   remove
+    f(i, j-1) + 1,   insert
+    f(i-1, j-1) + 1, replace if A[i] != A[j],
+    f(i-1, j-1), doing nothing if A[i] == A[j]
+    ) 
+
+Base case: f(0, j) = j, f(i, 0) = i
+
+dp  0 1 2 3 ... n
+0   0 1 2 3 ... n
+1   1 
+2   2
+... 
+m   m
+Pseudocode
+int editDistance(String A, String B) {
+    int m = A.length(), n = B.length();
+    int[][] dp = new int[m+1][n+1];
+    for (int j = 0; j <= n; j++) dp[0][j] = j;
+    for (int i = 0; i <= m; i++) dp[i][0] = i;
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1]);
+            if (A.charAt(i-1) == B.charAt(j-1)) dp[i][j] = Math.min(dp[i][j], dp[i-1][j-1]); 
+            else dp[i][j] = Math.min(dp[i][j], dp[i-1][j-1]+1);
+        }
+    }
+
+}
