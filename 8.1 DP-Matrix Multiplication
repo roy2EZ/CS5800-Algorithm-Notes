@@ -1,0 +1,63 @@
+Class 8 07/08/2019
+Matrix Multiplication
+Description
+A1 * A2 * ... * An
+
+
+for A * B, the time would be O(pqr)
+
+For A1 * A2 * A3, Assume A1(2 * 100), A2(100 * 5), A3(5 * 3)
+We can do (A1 * A2) * A3, overall time is 2 * 100 * 5 + 2 * 5 * 3 = 103
+Or we can do A1 * (A2 * A3), overall time is 100 * 5 * 3 + 2 * 100 * 3 = 2100
+
+What's the minimum cost after re-arranging the order of calculation?
+Solution
+Explanation
+f(i, j) = min cost to multiply Ai * ..  * Aj
+
+Assume i < k < j, 
+
+f(i, j) = f(i, k) + f(k+1, j) + m0 * nk * mj
+
+For A1 * A2 * A3 * A4,
+
+Option1: A1 * (A2*A3*A4) = f(2, 4) + p0p1p4
+
+Option2: (A1*A2) * (A3*A4) = f(1, 2) + f(3, 4) + p0*p2*p4
+
+Option2: (A1*A2*A3) * A4 = f(1, 3) + p0 * p3 * p4
+
+Thus, f(i, j) = min(option1, option2, option3)
+
+f(i, j) = min(f(i, k) + f(k+1, j) + pi-1*pk*pj, i <= k < j)
+
+We can use dp[i][j] to store all the results, and return dp[0][n]
+
+base case dp[i][i]
+
+  0 1 2 3 4
+0 0 
+1   0 y x
+2     0 v
+3       0
+4         0
+
+x = 0 + y + v + 0
+We search the left and the bottom of dp[i][j]
+
+So we update dp[i][j] from left to right, from bottom to up
+Pseudocode
+// O n^3 time O n^2 space
+int MatrixMultiplication(int[] p) {
+    int n = p.length;
+    int[][] dp = new int[n+1][n+1];
+    for (int j = 2; j <= n; j++) {
+        for (int i = j-1; j >= 1; j--) {
+            dp[i][j] = Integer.MAX_VALUE;
+            for (int k = i; k <= j-1; k++) {
+                dp[i][j] = Math.min(dp[i][j], dp[i][k] + dp[k+1][j] + p[i-1]*p[k]*p[j] )
+            }
+        }
+    }
+    return dp[1][n];
+}
