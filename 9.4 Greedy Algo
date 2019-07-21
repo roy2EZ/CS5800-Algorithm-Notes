@@ -1,0 +1,13 @@
+Event Scheduling
+Description
+If we have n events, each have a [start, end] time. What’s the maximum number of events we can schedule?
+
+Solution
+Explanation
+Algo #1 shortest event
+Algo #2 earliest start time
+Algo #3 earliest end time
+Algo #4 longer
+Algo #5 least num of conflicts
+
+#3 is correct greedy algo. For #1 #2 #4 #5 can easily get counter example
