@@ -1,0 +1,58 @@
+Class 7 06/24/2019
+
+1. 0-1 Knapsack Problem
+Description
+Assume we have n items
+value = [...]
+weight = [...]
+capcity = C
+We need to get the max value.
+f(i, j) = item[0-i], capacity j
+f(i, j) = max(v[i] + f(i-1, j-weight[i]), f(i-1, j))
+
+base case
+f(0, j) = f(i, 0) = 0
+Pseudocode
+// O N*C time O n*c space -> O C space(optimized)
+int knapsack(int[] values, int[] weights, int C) {
+    for (int i = 0; i < values.length; i++) {
+        for (int j = 0; j <= C; j++) {
+            if (weights[i] <= j) {
+                dp[i][j] = Math.max(dp[i-1][j], values[i] + dp[i-1][j-weights[i]];)
+            } else {
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+    }
+    return dp[n][j];
+}
+
+2. Unbounded Knapsack
+Description
+Input: n types of items, for each type there are inf copies. For each item of type i, we have values[i] and weights[i]. We also have capacity of knapsack.
+
+Naive approach
+f(i) maximum value we can get
+f(i) = max value given capacity i
+
+a1 = V[1] + f(i-w[1])
+a2 = V[2] + f(i-w[2])
+...
+a3 = V[3] + f(i-w[3])
+f(i) = max(v[1], v[2], ... v[n])
+
+base case:
+f(0) = 0
+T(n) -> n sub problems each time -> O(n^C)
+Pseudocode
+// O Cn time O C spacee
+int knapsack(int[] v, int[] w, int C) {
+    int[] dp = new int[C+1];
+    for (int i = 1; i <= C; i++) {
+        for (int j = 0; j < v.length; j++) {
+            if (w[j] <= i) dp[i] = Math.max(dp[i], v[j] + dp[i-w[j]]);
+        }
+    }
+    return dp[C];
+}
+
