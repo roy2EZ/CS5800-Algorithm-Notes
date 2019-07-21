@@ -1,0 +1,25 @@
+Longest Increasing Subsequence
+Description
+Given an array 1, 2, 4, 3, find the longest increasing subsequence, 1, 2, 3
+Solution
+Explanation
+f(i) = length of LIS given A[1:i]
+dp[i] = max(
+    1, 
+    f(1) + 1, if A[1] < A[i],
+    f(2) + 1, if A[2] < A[i],
+    ...
+    f(i-1) + 1, if A[i-1] < A[i],
+)
+Pseudocode
+def func(A):
+    n = len(A)
+    dp = [0 for _ in range(n+1)]
+    res = 0
+    for i in range(1, n+1):
+        dp[i] = 1
+        for j in range(1, i):
+            if A[i-1] > A[j-1]:
+                dp[i] = max(dp[i], dp[j] + 1)
+        res = max(res, dp[i])
+    return res
