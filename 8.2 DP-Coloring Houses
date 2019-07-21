@@ -1,0 +1,33 @@
+Description
+Assume we have a street of n houses, we have 3 colors of them, red, green and yellow. The profit of coloring them should be R[], G[], Y[]. We want to have maximum profit while coloring all n houses. No adjacent houses can be painted the same color.
+
+Solution
+Explanation
+We assume g(i) = best way to color 1 … i, with ith house colored as green
+r(i) = paint first ith house and last house is red
+y(i) = same as above
+
+g(i) = G[i] + max(r(i-1), y(i-1))
+r(i) = R[i] + max(g(i-1), y(i-1))
+y(i) = Y[i] + max(r(i-1), g(i-1))
+r[1] = R[1]
+g[1] = G[1]
+y[1] = Y[1]
+
+Pseudocode
+int maxProfit(int[] G, int[] R, int[] Y) {
+    int n = G.length;
+    int[] r = new int[n];
+    int[] g = new int[n];
+    int[] y = new int[n];
+    r[0] = R[0];
+    g[0] = G[0];
+    y[0] = Y[0];
+    for (int i = 1; i < n; i++) {
+        r[i] = R[i] + Math.max(g[i-1], y[i-1]);
+        g[i] = G[i] + Math.max(r[i-1], y[i-1]);
+        y[i] = Y[i] + Math.max(g[i-1], r[i-1]);
+    }
+    return Math.max(r[n-1], g[n-1], y[n-1]
+    );
+}
