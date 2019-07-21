@@ -1,0 +1,323 @@
+Class 3 05/20/2019
+##Divide & Conquer
+Questions about Order Statistics
+Given a collection of integers, get the min/max value, median, 25% element, rth smallest element, etc.
+
+Question: How do we find the rth smallest element?
+
+Solution1 Sort the array
+sort array
+return A[k]
+The run time should be O(nlgn)
+
+Solution2 Based Partition
+Idea
+Definition 2
+
+| 1 | ... | start | ... | end | ... | 10 |
+
+A   | 1 | 2 | 3 | 6 | 7 | 5 | 4 |
+
+pos = partition(A, 1, 7, 5)
+pos = 3
+
+if we get the 3 as the pivot position, which means we still have to find 2 more elements
+
+we continue searching on kth(A, 4, 7, 2)
+Code
+// definition 1
+int findKth(int[] A, int k) {
+    int pos = partition(A, 1, n);
+    if (pos == k) return A[k];
+    if (pos > k) return findKth(A, 1, pos);
+    if (pos < k) return findKth(A, pos+1, n);
+}
+
+// definition 2
+// global index
+// rank of number with A[begin...end]
+int findKth(int[]A, int begin, int end, int k) {
+    
+}
+Analysis
+$ T(n) = T(n/2) + n = O(n)$
+
+Example 
+T(n) = T(2n/3) + n = O(n)
+T(n) = T(99n/100) + n = O(n)
+T(n) = T(n-1) + n = O(n^2)
+Find Top K
+Solution 1 Sort the array
+Sort the array
+return A[1:k]
+Time: $ O(nlogn) $
+
+Solution 2 findKth algorithm
+partition
+return A[1:k]
+Time: $ O(n) $
+
+Solution 3 Min Heap
+make a min heap
+delete k times
+Time: $O(n + klogn)$ (depends on which one’s bigger)
+
+Solution 4 Max Heap
+m make a max heap A[1:k]
+for (i = k+1, ... , n)
+    if(A[i] < getMax()) {
+        deleteMax();
+        insert(A[i]);
+    }
+Time: $ O(k + (n-k)*logk)$
+When n is large, $ O(nlogk) $
+When k is large, $ O(k) $
+
+Big Integer Multiplication
+for integers of 32-bit(unsigned), we have a range of $ (0, 2^{32}-1) $, which are 10 digits
+
+for integers of 64-bit(unsigned), we have a range of $ (0, 2^{64}-1) $, which are 10 digits
+
+RSA
+An encryption algorithm using large integer multiplication.
+
+Idea
+Input: 2 integers of n-bits
+Example:
+
+    1110 = 14
+*   0101 =  5
+ 1000110 = 70
+Time : $ O(n^2) $
+
+Divide and Conquer
+a can be split to | a1 | a2|
+
+for example,
+a = 1110 = $ 11 * 2^2 + 10 $ (Shift left by 2 bit)
+
+Therefore,
+$ a = a_12^{n/2} + a_2 $
+$ b = b_12^{n/2} + b_2 $
+$ a b = a_1b_12^{n} + (a_1b_2+a_2b_1)2^{n/2} + a_2b_2 $
+
+We divide the 1 problem to 4 child problem.
+
+T(n) = 4T(n/2) + n(sum 2 n-bit integers) = O(n^2)
+
+Improve the running time
+$ p_1 = a_1b_1$
+$ p_2 = a_2b_2$
+$ p_3 = (a_1+a_2)(b_1+b_2)$
+$ a b = p_12^{n} + (p_3-p_1-p_2)2^{n/2} + p_2 $
+
+We can save the Time to
+
+T(n) = 3T(n/2) + n
+$ T(n) = O(n^{log_2{3}}) $
+
+Extra cases
+What if 2 integers are not with the same digits?
+Pad the 0’s to the nearest exponential of 2.
+
+For example
+110 -> 0110
+10010 -> 00010010
+Square Matrix Multiplication
+Idea
+input: 2 n*n matrices
+
+$
+X = \left[
+\begin{matrix}
+1 & 1 \
+1 & 0
+\end{matrix}
+\right]_{n*n}
+$
+
+$Y = \left[
+\begin{matrix}
+1 & 1 \
+1 & 0
+\end{matrix}
+\right]_{n*n}
+$
+
+$ X*Y = O(n^3) $
+
+Here we use the block of matrix to Divide & Conquer
+
+$
+X = \left[
+\begin{matrix}
+1 & 1 \
+1 & 0
+\end{matrix}
+\right]_{n*n} = \left[
+\begin{matrix}
+A & B \
+C & D
+\end{matrix}
+\right]
+$
+
+$Y = \left[
+\begin{matrix}
+1 & 1 \
+1 & 0
+\end{matrix}
+\right]_{n*n} = \left[
+\begin{matrix}
+E & F \
+G & H
+\end{matrix}
+\right]
+$
+
+$ XY = \left[
+\begin{matrix}
+{AE+BG} & {AF+BH} \
+{CE+DG} & {CF+DH}
+\end{matrix}
+\right]_{nn}
+$
+
+Therefore, $ T(n) = 8T(\frac{n}{2}) + n^2 = O(n^3)$
+
+Optimization
+$ XY = \left[
+\begin{matrix}
+{AE+BG} & {AF+BH} \
+{CE+DG} & {CF+DH}
+\end{matrix}
+\right]_{nn} = \left[
+\begin{matrix}
+{Q} & {R} \
+{S} & {T}
+\end{matrix}
+\right]
+$
+
+$Assume:$
+$P_1 = A(F-H)$
+$P_2 = H(A+B)$
+$P_3 = E(C+D)$
+$P_4 = D(G-E)$
+$P_5 = (A+D)(E+H)$
+$P_6 = (B-D)(G+H)$
+$P_7 = (A-C)(E+F)$
+$Q = P_4 + P_5 - P_2 + P_6$
+$R = P_1 + P_2$
+$S = P_3 + P_4$
+$T = P_1 + P_5 - P_3 - P_7$
+
+$ X*Y = \left[
+\begin{matrix}
+{AE+BG} & {AF+BH} \
+{CE+DG} & {CF+DH}
+\end{matrix}
+\right] = \left[
+\begin{matrix}
+{P_4 + P_5 - P_2 + P_6} & {P_1 + P_2} \
+{P_3 + P_4} & {P_1 + P_5 - P_3 - P_7}
+\end{matrix}
+\right]
+$
+
+Therefore, $ T(n) = 7T(\frac{n}{2}) + n^2 = O(n^3)$, Successfully optimized.
+
+Counting Inversions
+Idea
+Inversion: if i < j && A[i] > A[j], then (i, j) is an inversion.
+
+If my favorite list is [1, 2, 3], num of inversion is 0
+If list is [2, 1, 3], num of inversion is 1
+If list is [2, 3, 1], num of inversion is 2
+If list is [3, 2, 1], num of inversion is 3, we have a completely different taste
+Max num of inversions of a n list is $ C^{2}_{n} = O(n^2) $
+
+Code
+// Brute force
+int count = 0;
+for (int i = 0; i <=n; i++) {
+    for(int j = i+1; j <=n; j++) {
+        if (A[i] > A[j]) {
+            count++;
+        }
+    }
+}
+Better Implementation
+
+        1         n/2 n/2+1       n
+A       |      x     |       y    |
+
+num of cross inversions + x + y
+
+
+        begin        mid mid+1      end
+A       |     1  3  5   |  0  2  6   |
+              p            q
+
+given A[p] = 1, A[q] = 0, A[p] > A[q], we have inv += 3, q++
+A[p] < A[q], p++
+A[q] < A[p], inv += 2, q++
+A[p] < A[q], p++
+A[p] < A[q], p++, end
+Code
+int CountInv(int[] A, int begin, int end) {
+    if (begin >= end) return 0;
+    int mid = (mid + end) / 2;
+    int x = CountInv(A, begin, mid);
+    int y = CountInv(A, mid+1, end);
+    int z = CrossInv(A, begin, mid, end);
+    return x + y + z;
+}
+
+// o nlogn time
+int CrossInv(int[] A, int begin, int mid, int end) {
+    sort(A, begin, mid);
+    sort(A, mid+1, end);
+    int p = begin, q = mid + 1, count = 0;
+    while (p <= mid && q <= end) {
+        if (A[p] < A[q]) p++;
+        else count += mid - p+1;
+    }
+    return count;
+}
+Analysis
+$ T(n) = 2T(\frac{n}{2}) + nlogn /= O(nlognlogn)$
+
+Optimization
+int CountInv(int[] A, int begin, int end) {
+    if (begin >= end) return 0;
+    int mid = (mid + end) / 2;
+    int x = CountInv(A, begin, mid); // sort the left
+    int y = CountInv(A, mid+1, end); // sort the right
+    int z = CrossInv(A, begin, mid, end); // count the cross
+    //merge left and right 
+    merge(A, begin, mid, end);
+    return x + y + z;
+}
+
+// on time
+int CrossInv(int[] A, int begin, int mid, int end) {
+    int p = begin, q = mid + 1, count = 0;
+    while (p <= mid && q <= end) {
+        if (A[p] < A[q]) p++;
+        else count += mid - p+1;
+    }
+    return count;
+}
+$ T(n) = 2T(\frac{n}{2}) + n = O(nlogn)$
+
+Example
+        | 7 | 2 | 3 | 4 | 1 | 6 | 5 | 8 |
+        | 2 | 3 | 4 | 7 | 1 | 6 | 5 | 8 |
+                    /    \ 
+           3                    
+  | 2 | 7 | 3 | 4 |         | 1 | 6 | 5 | 8 |
+
+    /       \                   /       \
+   1         0                 
+| 7 | 2 |  | 3 | 4 |        | 1 | 6 |   | 5 | 8 |
