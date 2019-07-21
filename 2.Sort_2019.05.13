@@ -1,0 +1,466 @@
+Class 2 05/13/2019
+##Sort
+#Quick Sort
+Partition
+Given array like
+
+|1 |9 |2 |8 |3 |8 |7 |5 |6 |
+
+
+Choose a pivot, put all num < pivot in left, others in right
+
+|    nums <=  pivot  |pivot|  nums > pivot   |
+
+The process is partition(A[], i, j)
+Code
+QuickSort(int[] A, int i, int j) {
+    if (i >= j) {return;}
+    int pivot_pos = Partition(A, i, j);
+    QuickSort(A, i, pivot_pos-1);
+    QuickSort(A, pivot_pos+1, j);
+}
+Time Complexity
+T(n) = 2T(n/2) + n = Θ(nlogn)
+T(n) = T(n/3) + T(2n/3) + n = Θ(nlogn)
+T(n) = T(n/1000) + T(999n/1000) + n = Θ(nlogn)
+
+Worst Case
+T(n) = T(n-1) + n = Θ(n^2)
+Average T(n) = Θ(nlogn)
+
+Worst T(n) = Θ(n^2)
+
+Code of Partition
+pivot = A[j]
+| i |  ... | p | p+1 |  ...  | cur |  ...  | j |
+
+i - p: <= pivot
+p - p+1: > pivot
+cur: current pointer
+A[cur] > pivot
+
+cur += 1
+A[cur] <= pivot
+
+swap(A[cur], A[p+1]);
+p += 1;
+cur += 1
+Partition(int[] A, int i, int j) {
+    int pivot = A[j];
+    int p = i - 1;
+    for (int cur = i; cur <= j-1; cur++) {
+        if (A[cur] <= pivot) {
+            swap(A[cur], A[p+1]);
+            p += 1;
+        }
+    }
+    swap(A[j], A[p+1]);
+    return p+1;
+}
+
+Review
+Review of quicksort
+Stable Sort
+| ... | 5(1) | ...  |  ...  | 5(2) |  ...  |
+
+After sort
+
+| ... | 5(1)| 5(2) |  ...  |
+
+If two 5 are still in their relative positions, then this is a stable sort.
+Runtime of Quick Sort
+Runtime:
+
+Average: $O(nlogn)$
+Worst: $O(n^2)$
+
+The worst case is $T(n) = T(n-1) + n$
+
+Pivot Selection
+Median of Three
+| i | ... | (i+j)/2 | ... |  j  |
+Heap Sort
+Types of Heap
+Max Heap
+Min Heap
+Operations (of Heap)
+Insert(E) $O(logn)$
+getMax() $O(1)$
+deleteMax() $O(logn)$
+Operations (of Sorted Array)
+Insert(E) $O(n)$
+getMax() $O(1)$
+deleteMax() $O(1)$
+Comparison of array and heap
+The worst time of heap operation is logn.
+
+However, A sorted array takes On time to insert, which is the bottleneck of the overall time complexity.
+
+Logical View and Physical View
+Logical View
+
+
+          7(1)
+         /    \
+      3(2)      6(3)
+     /   \       /
+   1(4)  2(5)  5(6)
+
+Almost-Full Binary Tree
+Parent must be >= both children
+Physical View
+
+
+               1   2   3   4   5   6
+Array        | 7 | 3 | 6 | 1 | 2 | 5 |
+helper functions of heap
+i is the index
+
+parent(i) = i / 2
+leftChild(i) = i 2
+rightChild = i 2+1
+
+getMax() O(1)
+getMax() - return A[1]
+
+insert() O(logn)
+Case 1
+
+           7(1)
+         /      \
+      3(2)      6(3)
+     /   \       / \
+   1(4)  2(5)  5(6) 3(7)
+
+No need to adjust
+Case 2
+
+           7(1)
+         /      \
+      3(2)      6(3)
+     /   \       / \
+   1(4)  2(5)  5(6) 8(7)
+
+Swap 8 with 6
+
+           7(1)
+         /      \
+      3(2)      8(3)
+     /   \       / \
+   1(4)  2(5)  5(6) 6(7)
+
+Swap 7 with 8
+
+           8(1)
+         /      \
+      3(2)      7(3)
+     /   \       / \
+   1(4)  2(5)  5(6) 6(7)  
+
+Complete inserting.
+
+                        1   2   3   4   5   6   7
+Array(after insert)   | 8 | 3 | 7 | 1 | 2 | 5 | 6|
+Code of insert()
+void insert(int e) {
+    // increase the size n of the heap
+    n += 1;
+    // insert the item to heap A
+    A[n] = e;
+    // Adjust from index i=n
+    int i = n;
+    // if cur node has a parent and the parent is smaller
+    while (parent(i) > 0 && A[parent(i)] < A[i]) {
+        swap(A[parent(i)], A[i]);
+        i = parent(i);
+    }
+}
+deleteMax()
+           8(1)
+         /      \
+      3(2)      7(3)
+     /   \       / \
+   1(4)  2(5)  5(6) 6(7)  
+
+Swap 6 with 8, and delete 8
+
+           6(1)
+         /      \
+      3(2)      7(3)
+     /   \       / 
+   1(4)  2(5)  5(6) 
+
+                      1   2   3   4   5   6  
+Array(after swap)   | 6 | 3 | 7 | 1 | 2 | 5 | 
+
+Swap 6 with 7
+
+           7(1)
+         /      \
+      3(2)      6(3)
+     /   \       / 
+   1(4)  2(5)  5(6) 
+
+                      1   2   3   4   5   6  
+Array(after swap)   | 7 | 3 | 6 | 1 | 2 | 5 | 
+
+Heap is balanced. 
+deleteMax() completed.
+heapify()
+           6(1)
+         /      \
+      3(2)      7(3)
+     /   \       / 
+   1(4)  2(5)  5(6)  
+
+The subTree of root 3 is a MaxHeap
+The subTree of root 7 is a MaxHeap
+However, the tree of root 6 is not a MaxHeap.
+Now we need the heapify().
+Code of heapify()
+void heapify(int[] A, i) {
+    int largest = i;
+    // Find the largest of cur root(i) and its children
+    // if left child exists and left child is bigger than cur root
+    if (leftChild(i) <= n && A[leftChild(i)] > A[largest]) {
+        largest = leftChild(i);
+    }
+    // if left child exists and left child is bigger than cur root
+    if (rightChild(i) <= n && A[rightChild(i)] > A[largest]) {
+        largest = rightChild(i);
+    }
+
+    // check largest
+    if (largest == i) return;
+
+    // let the cur largest node be the root
+    swap(A[i], A[largest]);
+    // continue heapifying down the swapped node recursively
+    heapify(A, largest);
+}
+Code of deleteMax()
+void deleteMax() {
+    // swap the cur root with the last node
+    swap(A[1], A[n]);
+    // delete the last node
+    n -= 1;
+    // heapify the whole heap
+    heapify(A, 1);
+}
+Heap Sort
+Max Heap
+
+          1   2   3   4   5   6  
+Array   | 7 | 3 | 6 | 1 | 2 | 5 | 
+
+Pretend we are deleting the max val.(deleteMax())
+
+                         1   2   3   4   5 || 6  
+Array(after deleted)   | 5 | 3 | 6 | 1 | 2 || 7(max) |
+Now we get the biggest node in the tail of the array.
+continue sort the rest.
+Code of Heap Sort
+void heapSort(int[] A) {
+    for(int i = n; i >= 1; i--) {
+        deleteHeap(A, 1, i);
+    }
+}
+``` 
+
+
+### makeHeap()
+
+Solution 1 insert n times `O(nlogn)`
+
+Solution 2
+      6(1)
+    /      \
+ 3(2)      7(3)
+/   \       / 
+1(4) 2(5) 5(6)
+
+n = 3 is the last non-trivil node
+we heapify the 7, 3, 6 nodes, where we ensure that all children are valid heap.
+
+
+### Code of makeHeap()
+
+```Java
+// n/2 means the last non-trivil node in the heap
+for (int i = n/2; i >=1; i--) {
+    heapify(A, i);
+}
+Example of heap sort
+First, make this into a heap.
+
+           9(1)
+         /      \
+      2(2)      6(3)
+     /   \       / 
+   1(4)  4(5)  3(6)  
+
+          1   2   3   4   5   6  
+Array   | 9 | 2 | 6 | 1 | 4 | 3 |    
+
+call makeHeap() on 6
+
+call makeHeap() on 2
+
+           9(1)
+         /      \
+      4(2)      6(3)
+     /   \       / 
+   1(4)  2(5)  3(6)  
+
+          1   2   3   4   5   6  
+Array   | 9 | 4 | 6 | 1 | 2 | 3 |  
+
+call deleteHeap() on 9
+
+           3(1)
+         /      \
+      4(2)      6(3)
+     /   \       
+   1(4)  2(5)  
+
+          1   2   3   4   5    6  
+Array   | 3 | 4 | 6 | 1 | 2 || 9 |
+
+call heapify() on 3
+
+           6(1)
+         /      \
+      4(2)      3(3)
+     /   \       
+   1(4)  2(5)  
+
+          1   2   3   4   5    6  
+Array   | 6 | 4 | 3 | 1 | 2 || 9 |
+
+call deleteHeap() on 6
+
+           2(1)
+         /      \
+      4(2)      3(3)
+     /       
+   1(4)  
+
+          1   2   3   4    5   6  
+Array   | 2 | 4 | 3 | 1 || 6 | 9 |
+
+call heapify() on 2
+
+           4(1)
+         /      \
+      2(2)      3(3)
+     /         
+   1(4)   
+
+          1   2   3   4    5   6  
+Array   | 4 | 2 | 3 | 1 || 6 | 9 |
+
+call deleteHeap() on 4
+
+           1(1)
+         /      \
+      2(2)      3(3)
+     /          
+   4(4)   
+
+          1   2   3    4   5   6  
+Array   | 1 | 2 | 3 || 4 | 6 | 9 |
+...
+The array is sorted.
+Sorting Algorithms
+Types of sorting algorithms
+Algorithm	Time Complexity	Notes
+Quick Sort	$O(nlogn)$
+Merge Sort	$O(nlogn)$
+Heap Sort	$O(nlogn)$
+Bubble Sort	$O(n^2)$
+Insertion SOrt	$O(n^2)$
+Selection SOrt	$O(n^2)$
+Counting SOrt	$O(n)$	Non-comparison based
+Radix SOrt	$O(n)$	Non-comparison based
+Theorem of comparison based sorting algorithm
+Comparison based sorting algorithm always run in $Ω(nlogn)$.
+
+Counting Sort
+Assume we have array A
+The input nums should satisfy 0 <= A[i] <= k
+
+input   A    | 2 | 1 | 3 | 5 | 4 | 2 | 1 | 0 | 3 |
+
+               0   1   2   3   4   5
+bucket  B    | 1 | 2 | 2 | 2 | 1 | 1 |
+
+               0   1   2   3   4   5
+bucket  B'   | 1 | 3 | 5 | 7 | 8 | 9 |
+
+output  C    | 0 | 1 | 1 | 2 | 2 | 3 | 3 | 4 | 5 |
+
+``` 
+
+### Code of Counting Sort
+
+```Java
+//Step of counting sort
+// fill the num in the buckets
+for (int i = 0; i < n; i++) {
+    B[A[i]] += 1
+}
+
+// indicates where the curr digit ends in the ouput array
+for (int i = 0; i <= k; i++) {
+    B[i] += B[i-1];
+}
+
+// fill the digit into the array
+for (int i = n-1; i >= 0; i--) {
+    C[B[A[i]]] = A[i];
+    B[A[i]] -= 1;
+}
+
+return C;
+problems of Counting Sort
+Q: Why 0-based?
+A: To represent the case where the input has 0.
+
+Q: what happened if we have negative input?
+A: Map the input to the form we want. e.g. [-10, 10] -> [0, 20]
+
+Q: Is this algorithm stable?
+A: In this case, yes.
+
+Analysis of Counting Sort
+Run time: $O(n+k)$
+Space: $O(k)$
+
+Radix Sort
+Introduction
+Also known as digit sort.
+
+Only for positive base 10 integers.
+
+Example
+Use the counting sort to sort the colomn
+
+100      100     100       4
+ 23       41       4      13
+123      512     512      23  
+512       23     013      41
+  4  =>  123 =>   23  => 100
+ 13       13     123     123
+ 41        4      41     512
+999      999     999     999
+Analysis
+d is the number of digits, k is the range of the inputs(e.g. 32 bit integer)
+Run time: $O((n+k)d)$
+Space:
+
+e.g.
+
+32-bit int
+| 8-bit | 8-bit | 8-bit | 8-bit |  
+d = 4 times of counting sort
+k = 2^8 = 256
