@@ -1,0 +1,143 @@
+Class 6 06/17/2019
+Dynamic Programming
+
+Steps of DP problem
+Situations of DP
+
+Optimization : max/min problem
+Counting: binomial
+Feasibility: if the target is possible to get
+Design recursion
+
+Naive recursive implementation yields bad running time(Usually exponential)
+
+e.g. Recompute the same thing. Fibonacci.
+Caching
+
+bottom -> up( small -> large)
+top -> down with memoization
+Longest Common Subsequences
+Description
+input: A[1 ... n]
+       B[1 ... n] 
+e.g.
+A = [1, 5, 2, 3, 4]
+sub can be [1]  [1, 3]  [1, 2, 4]
+not [3, 2, 4]
+Solution
+define f(i, j) = length of the LCS given A[1 ... i] & B[1 ... j]
+
+A | 1 | ... | i |
+B | 1 | ... | j |
+
+case 1: A[i] = B[j]
+f(i, j) = f(i-1, j-1) + 1
+
+case 2: A[i] != B[j]
+f(i, j) = max(f(i-1, j), f(i, j-1))
+
+base case: f(0, j) = f(i, 0) = 0
+Pseudocode
+// O 2^n time O m+n space
+int LCS_slow(int[] A, int[] B, int i, int j) {
+    if (i == 0 || j == 0) return 0;
+    if (A[i] == B[j]) return 1 + LCS_slow(A, B, i-1, j-1);
+    return Math.max(LCS_slow(A, B, i, j-1), LCS_slow(A, B, i-1, j));
+}
+
+// 2-d array dp(bottom up)
+// O mn time O mn space
+int LCS(int[] A, int[] B, int i, int j) {
+    for (int i = 0 ... n) dp[i, 0] = 0;
+    for (int j = 0 ... m) dp[0, j] = 0;
+    for (int i = 1 ... n) {
+        for (int j = 1 ... m) {
+            if (A[i] == B[j]) dp[i][j] = dp[i-1][j-1] + 1;
+            else dp[i][j] = max(dp[i-1, j], dp[i, j-1]);
+        }
+    }
+    return dp[n, m]
+}
+
+// optimized recursive solution (top down)
+int LCS(int[] A, int[] B, int i, int j, int[][] dp) {
+    if (i == 0 || j == 0) return 0;
+    if (dp[i][j] != -1) return dp[i][j];
+    if (A[i] == B[j]) {
+        dp[i][j] = LCS(A, B, i-1, j-1, dp) + 1;
+    } else {
+        dp[i][j] = Math.max(LCS(A, B, i-1, j, dp), LCS(A, B, i, j-1, dp));    }
+
+    return dp[i][j];
+}
+
+// get the result set out of 2-d ap array
+// O m+n time
+int constructSolution(int[] A, int[] B, int[][] dp) {
+    List<Integer> l = new ArrayList<>();
+    int i = A.length;
+    int j = B.length;
+    while (i > 0 && j > 0) {
+        if (A[i] == B[j]) {
+            l.add(A[i]);
+            i--;
+            j--;
+        } else if (dp[i-1][j] < dp[i][j-1]) {
+            j--;
+        } else i--;
+    }
+    return l.reverse();
+}
+
+// optimized space solution
+// O min(m, n) space O mn time
+// dp row = 2, col = n
+int LCS(int[] A, int[] B, int i, int j) {
+    for (int i = 1 ... n) {
+        for (int j = 1 ... m) {
+            if (A[i] == B[j]) dp[i%2][j] = dp[(i-1)%2][j-1] + 1;
+            else dp[i%2][j] = max(dp[(i-1)%2, j], dp[i%2, j-1]);
+        }
+    }
+    return dp[n, m]
+}
+Code(Bottom Up)
+def func(A, B):
+    m = len(A)
+    n = len(B)
+    dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            if A[i-1] == B[j-1]:
+                dp[i][j] = dp[i-1][j-1]+1
+            else:
+                dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+    return dp[m][n]
+int lcs(int[] A, int[] B) {
+    int m = A.length;
+    int n = B.length;
+    int[][] dp = new int[m+1][n+1];
+    for (int i = 1; i < m+1; i++) {
+        for (int j = 1; j < n+1; j++) {
+            if (A[i-1] == B[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+            else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+List<Integer> constructSolution(int[] A, int[] B, int[][] dp) {
+    List<Integer> l = new ArrayList<>();
+    int i = A.length;
+    int j = B.length;
+    while (i > 0 && j > 0) {
+      if (A[i] == B[j]) {
+        l.add(A[i]);
+        i--;
+        j--;
+      } else if (dp[i-1][j] < dp[i][j-1]) {
+        j--;
+      } else i--;
+    }
+    Collections.reverse(l)
+    return l;
+  }
