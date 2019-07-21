@@ -1,0 +1,167 @@
+Class 10 07/15/2019
+Graph Introduction
+Definition: G = (V, E)
+
+Type: {directed graph, undirected graph}
+
+Notation: |V| = n, |E| = m
+
+DataStructure: {Adjacent List, Adjacent Matrix}
+
+Storage: O(m+n) for Adj List, O(n^2) for Adj Matrix.
+
+Time complexity
+
+Operation	Adjacency List	Adjacency Matrix
+Existence of Edge	O(d)	O(1)
+Traverse the node	O(d)	O(n)
+BFS
+BFS(G, S) {
+    q.enqueue(S);
+    visited[S] = T;
+    while(!q.isEmpty()) {
+        u = q.dequeue();
+        // processing on u
+        for (v in G.neighbors(u)) {
+            if (!visited[v]) {
+                q.enqueue(v);
+                visited[v] = true;
+            }
+        }
+    }
+}
+
+// Track the distance from S to nodes
+BFS2(G, S) {
+    q.enqueue(S);
+    visited[S] = T;
+    dist[S] = 0;
+    parent[S] = -1;
+    while(!q.isEmpty()) {
+        u = q.dequeue();
+        // processing on u
+        for (v in G.neighbors(u)) {
+            if (!visited[v]) {
+                q.enqueue(v);
+                dist[v] = dist[u] + 1;
+                parent[v] = u;
+                visited[v] = true;
+            }
+        }
+    }
+}
+
+
+// Traverse all nodes
+BFS(G, S, visited){}
+BFS_ALL(G) {
+    visited[1...n] = false;
+    for (s = 1, 2, ... n) {
+        if (visited[S] == false) {
+            BFS(G, S, visited);
+        }
+    }
+}
+Analysis
+Time: O(m+n) if we take initialization into account.
+We would like to use Adjacency List here.
+
+Word Ladder
+Pseudocode
+BFS(graph[], start, end, dic) {
+    q.enqueue(start);
+    visited.insert(start);
+    dist[start] = 0;
+    while(!q.isEmpty()) {
+        u = q.dequeue();
+        if (u == end) return dist[u];
+        for (v in graph[u]) {
+            if (!visited.contains(v) && dic.lookup(v)) {
+                visited.insert(v);
+                q.enqueue(v);
+                dist[v] = dist[u] + 1;
+            }
+        }
+    }
+    return -1;
+}
+puzzle - 8
+Description
+3 _ 5
+6 1 4       A
+2 7 8
+
+1 2 3
+4 5 6       B
+7 8 _
+After a sequence of moves, We have to turn A to B
+
+It's a graph problem (undirected)
+
+3 _ 5      _ 3 5      3 5 _      3 1 5
+6 1 4  ->  6 1 4  or  6 1 4  or  6 _ 4
+2 7 8      2 7 8      2 7 8      2 7 8
+Explanation
+As you can see, each state is a node.\
+
+1. We can encode each state as a string, 
+f(A) = "3X5614278"
+
+2. We can use a 3X3 matrix, but need to implement a hash function. e.g. hashcode = 3 * 41^8 + 5 * 41^6 + ...
+Pseudocode
+// helper function
+getNumber(String) -> List(String)
+Puzzle(graph[Vertex -> List(Vertex)], Vertex start, Vertex end) {
+    // Same BFS
+}
+Connected Components(Undirected Graph)
+Description
+1 - 3
+ \ /
+  2
+
+4 - 6
+ \ 
+  5
+
+7
+
+Question 1: number of connected components in graph
+Question 2: given an arbitrary node, find out which components it belongs to.
+Pseudocode
+/**
+Same as BFS_ALL
+Use a CC array to store the components information with a pointer.
+**/
+BFS(G) {
+    visited[1...n] = false;
+    for (S = 1...n) {
+        if (!visited[s]) {
+            BFS(G, S, visited, cc, cur_cc);
+            cur_cc++;
+        }
+    }
+}
+
+BFS(G, S, visited, cc, cur) {
+    q.enqueue(s);
+    visited[s] = true;
+    cc[s] = cur;
+    while (!q.isEmpty()) {
+        u = q.dequeue();
+        for (v in G.neighbor(u)) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.enqueue(v);
+                cc[v] = cur;
+            }
+        }
+    }
+}
+Counting islands
+Description
+1 1 0 0 
+1 0 1 1
+0 0 1 1 
+1 1 0 0
+How many islands do we have？
