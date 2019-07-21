@@ -1,0 +1,125 @@
+Class 5 06/10/2019
+Hashing/ HashTable
+
+Pre-hash and Hash
+Difference
+Pre-Hash	Hash
+int/float/string/user-define -> int	arbitrary large int -> reasonable int
+Can only return small integers
+Example
+HashTable<String , T> means we have String as key, T as value.
+
+class Pair {
+    int x;
+    int y;
+}
+HashTable<Pair, T> means we represent a coordinate as key.
+
+In java, we overwrite the HashCode() as the pre-hash function.
+
+For a String , a practical pre-hash function would be calculating the ascii code.
+
+ASCII is a 8 bit representation of a char data type.
+
+e.g.
+
+For “hello” and “hell”, we have
+
+Hashcode("hello") = 'h' * 41^3 + 'e' * 41^2
++ 'l' * 41^1 + 'l'
+p.s. the hashcode of single letter depends on the encoding way. If simple english, we just use its ascii. If unicode, we use another way.
+
+e.g. To represent Pair, we can use x^y as its hash function.
+
+SubSet : We can split the string and calculate each part of it, while we have a bigger chance to collision and worse time consumption.
+Caching : For extra long String, we can only call the hash function once, and store the pre-hash value in the memory.
+
+HashTable
+Idea
+key = Integer[in large space]
+Suppose key ranges from (0, m-1), then we have to map the integer from 0 to m-1
+insert(key)
+hash: int -> int [0, m)
+
+How do we choose m?
+m changes dynamically
+
+Load Factor $ \alpha = n/m $
+n = number of k-v pairs
+m = size of current hashtable
+Here, we increase m exponentially.
+e.g. m = 1024, next m would be 2048
+
+Question: Why don’t we increase m by 100 each time?
+Answer: Suppose we have $ \alpha = 1$, then every time we hit the bottle neck, we have to find a continuous memory to store all the stuff, which is a expensive On operation.
+
+Question: what happens if we do insert n times with m increasing by 100?
+Answer:
+
+C, C, C, ..., C, 100C
+C, C, ..., 200C
+C, C, ..., 300C
+C, C, ..., n/100C
+
+Overall: 100 + 200 + 300 + .. n/100 ~= O(n^2) time, which is super expensive. 
+
+C, C, C, ..., C, n/lognC
+C, C, ..., n/8C
+C, C, ..., n/4C
+C, C, ..., n/2C
+
+Overall: n/logn + n/8 + n/4 + .. n/2 ~= O(n) time, which is super expensive.
+Question: what happens if we have to adjust the size?
+Answer: Suppose $ \alpha < 0.2$, we would like to shrink the size by half. If $ \alpha > 0.8$, we would like to double the size. The threshold shold be decided wisely.
+
+what should be the hash function?
+hash function: (large space)int -> int [0, m)
+
+Division Method
+$ H(x) = x \% m $
+
+If m is a power of 2, then this function is bad. e.g. If m = 1024, if pre-hash only consists of even numbers, then half of the space is wasted. We should pick prime number as m. (disadvantage)
+
+Multiplication Method
+$ H(x) = a * x \% 2^{32} >> (32 - r) $
+$ m = 2^r $
+a is constant chosen randomly.
+
+Explanation: Since m = 2^r, we only need r bit to represent the hashcode. Suppose x is 32 bit, and a is 32 bit, then a*x is 64 bit. Then we mod it by 2^32, where we throw away half of the number. Next we right shift till we get only r digits, so that the hashtable con contain the num.
+
+x = | 1 | 1 | 0 | ... | 1 | 0 | 1| (32)
+a = | 0 | 0 | 1 | ... | 1 | 0 | 1| (32)
+a is random and every 1 means we duplicate a x and left shift by x k digits. In this way the middle part is more random than right part, because e use more information of thee original x in the middle(than the edge).
+Collision
+Birthday Paradox
+Suppose we randomly select x people, what’s the probability that two people have same birthday?
+
+To get a 50% of prob, we should select 23 people.
+
+This example showws the impact of collision.
+
+There are 2 ways to deal with collision, Chaining, Probing.
+
+Chaining
+$ h(x_{1}) = k $
+$ h(x_{2}) = k $
+Then we have key k -> $x_1$ => $x_2$
+
+run time O(1 + $ \alpha $)
+$ \alpha $ is load factor n/m
+worst case insert: len n/m logn
+
+Probing
+Here we are talking about Linear Probing.
+
+$ h(x_{1}) = k $
+$ h(x_{2}) = k $
+Then we have key k ($x_1$) -> n slots taken -> (k+n) $x_2$
+
+Delete: When wew delete an element, all the following elements have to be re-hashed.
+
+Suppose $ \alpha = n/m = 0.1$
+90 % of time is empty
+Therefore we need $1 / (1-\alpha)$ space to get a slot.
+
+time complexity: O n
