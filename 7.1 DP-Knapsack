@@ -56,3 +56,49 @@ int knapsack(int[] v, int[] w, int C) {
     return dp[C];
 }
 
+3. Knapsack with multiple constraints
+Description
+Now the items have a volume constraint
+n items  v[i], w[i], u[i]
+W - weight capacity
+U - volume capacity
+Only 1 copy of each item
+What's the maximum value we can get?
+Recursion
+i = # of items of first i items
+j = remaining weight capacity
+k remaining volume capacity
+f(i, j, k) = max value with constraints
+f(i, j, k) = max(
+    f(i-1, j, k), 
+    f(i-1, j-w[i], k-u[i]) + v[i]
+)
+
+base case
+f(0, j, k) = f(i, 0, k) = f(i, j, 0) = 0
+
+   _________
+  /       /| 
+ /_______/ |
+|        | |
+|        | |
+|        | /
+|________|/
+
+3 surfaces are the base cae
+Pseudocode
+// O(nWU) time O(nWU) space -> O(WU) space
+int knapsack(int n, int[] v, int[] w, int[] u, int W, int U) {
+    int[][][] dp = int[n+1][W+1][U+1];
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= W; j++) {
+            for (int k = 1; k <= U; k++) {
+                dp[i][j][k] = dp[i-1][j][k];
+                if (w[i] <= j && u[i] <= k) {
+                    dp[i][k][k] = Math.max(dp[i][j][k], v[i] + dp[i-1][j-w[i]][k-u[i]]);
+                }
+            }
+        }
+    }
+    return dp[n][W][U];
+}
