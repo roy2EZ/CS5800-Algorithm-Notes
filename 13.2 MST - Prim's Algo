@@ -1,0 +1,72 @@
+Minimum Spanning Tree
+Description
+Notes-2019-8-5-19-12-17.png
+Notes-2019-8-5-19-12-17.png
+
+
+
+Input: Connected undirected graph
+we want to find a weighted undicted graph that has the smallest cost.
+We have Prim's Algorithm and Kruskal's Algorithm to solve this.
+Prim’s Algorithm
+Description
+Notes-2019-8-5-19-24-45.png
+Notes-2019-8-5-19-24-45.png
+
+
+
+N = {}
+dist[u] = distance from set N to vertex U
+N is a set of vertices, we pick the shortest distacne from amongst all possible edges from U to this set.
+
+Example, 
+N = {}, dist = inf, inf, inf, inf
+1. N = {3}, dist = 2(3, 1), 1(3, 2), _, inf
+2. N = {3, 2}, dist = 2(3, 1), _, _, 2(4, 2)
+3. N = {3, 2, 4}, dist = 2(3, 1), _, _, _
+4. N = {3, 2, 4, 1}, dist = _, _, _, _
+
+Final dist = [2, 1, 0, 2]
+Final Spanning Tree
+Notes-2019-8-5-19-31-6.png
+Notes-2019-8-5-19-31-6.png
+
+
+PseudoCode
+Prims(G) {
+    N = {}, T = {};
+    while (N != V) {
+        1. pick vertex u in (V/N) with the smallest distance value
+        2. N = N U {u}, T = {(u, parent(u))} U T
+        3. for (v in G.neighbor(u)) {
+            if (Cost(u, v) < dist[v]) {
+                dist[v] = Cost(u, v), T[v] = u;
+            }
+        }
+    }
+}
+Example
+Notes-2019-8-5-19-24-45.png
+Notes-2019-8-5-19-24-45.png
+
+
+
+N = {3}
+dist = [2, 1, inf, inf]
+parent = [3, 3, -1, -1]
+
+N = {3, 2}
+dist = [2, 1, inf, 2]
+parent = [3, 3, -1, 2]
+
+N = {3, 2, 4}
+dist = [2, 1, inf, 2]
+parent = [3, 3, -1, 2]
+
+N = {3, 2, 4, 1}
+dist = [2, 1, inf, 2]
+parent = [3, 3, -1, 2]
+
+Our Tree is (1, 3), (2, 3), (4, 2)
+
+Actually here we don't need T here, and we can use a priority Queue to pick the smallest distance not in N.
