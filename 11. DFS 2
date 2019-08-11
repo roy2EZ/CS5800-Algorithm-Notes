@@ -1,0 +1,248 @@
+Class 11 07/22/2019
+Review
+Time Complexity of some algorithms
+Algorithm	Time Complexity
+BFS | O(m+n)
+Connected Components | O(m+n)
+DFS | O(m+n)
+Cycle Detection | O(m+n)
+
+DAG
+DAG = Directed Acyclic Graph
+Topological Sort
+Topological Sort
+DFS Solution
+Idea
+G = [[1, 3], [2, 5], [2, 6], [4, 2], [4, 3], [3, 6]]
+
+After DFS, we have
+         1  2  3  4  5  6
+timer = [4, 3, 1, 2, 6, 5]
+
+After reverse, 
+we have timer = [5, 6, 2, 1, 3, 4]
+which is a valid Topological sort.
+Step
+
+Use DFS_ALL() find finish time.
+
+Sort vertices by finish time in decreasing order.
+
+Doesn’t work for cyclic graph. Will recurse forever.
+
+Pseudocode
+// We mark each node in the order we visit them
+// if we sort the vertices by decreasing order of finishing time, then I have a valid topological sort
+DFS_ALL(G) {
+    visited[1...n];
+    finish[1...n];
+    timer = 1;
+    for (u = 1 ... n) {
+        if (visited[u] == false) {
+            DFS(G, u, visited, finish, timer);
+        }
+    }
+
+}
+
+DFS(G, u, visited, finish, timer) {
+    visited[u] = true;
+    for (v in G.neighbor(u)) {
+        if (visited[v] == false) {
+            DFS(G, v, visited, finish, timer);
+        }
+    }
+    finish[u] = timer;
+    timer += 1;
+}
+
+// updated version using array as finish time recorder
+DFS(G, u, visited, finish) {
+    visited[u] = true;
+    for (v in G.neighbor(u)) {
+        if (visited[v] == false) {
+            DFS(G, v, visited, finish);
+        }
+    }
+    finish.append(u);
+}
+Non DFS Solution
+Idea
+Record the indegree of the vertices and keep searching and updating the indegree map.
+
+The running time is O(m+n)
+
+Pseudocode
+TopoSort(G) {
+    for (u = 1 ... n) {
+        for (v in G[u]){
+            in[v]++;
+        }
+    }
+    for (u = 1... n) {
+        if (in[u] == 0) q.enqueue(u);
+    }
+    while (!q.isEmpty()) {
+        u = q.dequeue();
+        for (v in G[u]) {
+            in[v]--;
+            if (in[v] == 0) {
+                q.enqueue(v);
+            }
+        }
+    }
+}
+Boggle
+Description
+Given a 4X4 board
+
+HEAT
+ELOI
+UYXB
+PPAS
+
+Goal: 
+- find all words 
+- can start at any position
+- cannot reuse same pos in the word, but we can reuse them in different words
+PseudoCode
+// 4^16 Time Complexity. Terrible.
+Boggle(B[]) {
+    for (int i = 1 ... 4) {
+        for (int j = 1 ... 4) {
+            DFS(B[], visited[], i, j, "", solution);
+        }
+    }
+    return solution;
+}
+
+DFS(B[], visited[], i, j, String cur, solution) {
+    visited[i, j] = true;
+    potential_word = cur + B[i, j];
+    if (dict.contains(potential_word)) {
+        solution.add(potential_word);
+    }
+    if (i > 1 && !visited[i-1, j]) {
+        DFS(B[], visited, i-1, j, potential_word, solution);
+    }
+    if (i < 4 && !visited[i+1, j]) {
+        DFS(B[], visited, i+1, j, potential_word, solution);
+    }
+    if (j > 1 && !visited[i, j-1]) {
+        DFS();
+    }
+    if (j < 4 && !visited[i, j-1]) {
+        DFS();
+    }
+    visited[i, j] = false;
+}
+def getWords(root):
+    temp = root
+    import collections
+    q = collections.deque()
+    q.append(temp)
+    res = []
+    while q:
+        cur = q.popleft()
+        if cur.isWord:
+            res.append(cur)
+        for i in range(26):
+            if cur.children[i]:
+                q.append(cur.children[i])
+    return res
+
+class Trie:
+    def __init__(self):
+        self.children = [None for _ in range(26)]
+        self.word = ""
+        self.isWord = False
+
+def boggle(board, dic):
+    # Build Trie
+    root = Trie()
+    for word in dic:
+        buildTrie(root, word)
+    m, n = len(board), len(board[0])
+    res = []
+    # DFS
+    for i in range(m):
+        for j in range(n):
+            dfs(i, j, board, root, res, set())
+    return res
+
+def buildTrie(root, word):
+    temp = root
+    # Add all letters to the Trie as nodes
+    for letter in word:
+        ind = ord(letter) - ord("a")
+        if not temp.children[ind]:
+            temp.children[ind] = Trie()
+        # Update the child and temp
+        temp.children[ind].word = temp.word + letter
+        temp = temp.children[ind]
+    # Last letter node is a valid word
+    temp.isWord = True
+    
+def dfs(i, j, board, root, res, visited):
+    # Check if cur Trie Node exists and has been visited or not
+    ind = ord(board[i][j]) - ord("a")
+    if not root.children[ind] or (i, j) in visited:
+        return
+    # update cur Trie Node
+    root = root.children[ind]
+    # Memoization
+    visited.add((i, j))
+    # Check if we find a result
+    if root.isWord:
+        res.append(root.word)
+    # DFS
+    m, n = len(board), len(board[0])
+    for dx, dy in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
+        tempX, tempY = i + dx, j + dy
+        if 0 <= tempX < m and 0 <= tempY < n:
+            dfs(tempX, tempY, board, root, res, visited)
+    # Backtrack
+    visited.remove((i, j))
+
+
+board = [
+    ["a", "a", "c", "d"],
+    ["e", "l", "g", "h"],
+    ["i", "j", "k", "l"],
+    ["m", "l", "a", "a"],
+]
+dic = ["abc", "aal", "gkjlaaeimlaa", "lmijlgcaae"]
+print(boggle(board, dic))
+SCC
+Description
+d	c
+Strongly connected components |u->v and v->u|
+Weakly connected components | u->v or v->u|
+
+Example
+G = [[1, 3], [3, 2], [2, 1], [2, 4], [4, 5], [5, 4], [4, 6], [6, 7], [7, 8], [6, 8], [7, 9], [8, 9], [9, 6]]
+
+1. sort by finish time 
+
+1 2 3 4 5 6 7 8 9
+9 7 8 6 1 5 4 3 2
+
+Doesn't work, we can't get SCC
+
+
+2. reverse edge direction
+G = [[3, 1], [2, 3], [1, 2], [4, 2], [5, 4], [4, 5], [6, 4], [7, 6], [8, 7], [8, 6], [9, 7], [9, 8], [6, 9]]
+
+
+Sort the sequence by decreasing order, and start BFS to this sequence.
+6 9 8 7 4 5 1 2 3
+
+Actually, we can start wherever we want when doing the topological sort.
+We start from 1, and get 1, 3, 2
+then start from 4, get 4, 5
+then 6, get 6, 9, 8, 7
+that's the scc groups we want
+Steps
+
+DFS in $ G^T $.
+BFS in G using vertex sequence produced by step 1.
