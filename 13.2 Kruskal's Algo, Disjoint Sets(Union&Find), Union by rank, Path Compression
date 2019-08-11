@@ -1,0 +1,87 @@
+Kruskal’s Algorithm
+Description
+- Sort edges by their weights
+- T = {}
+for (e in sorted order) {
+    if (T U {e} has no cycle) {
+        T = T U {e}
+    }
+}
+To detect cycle, we can either use disjoint sets.
+Disjoint Sets
+- We have n items {1, 2, ..., n}
+- group them into disjoint sets {1, 2}, {4, 5, 6}
+// mlogn time 
+for (e = (u, v) in sorted order) {
+    if (Find(u) != Find(v)) {
+        T = T U {(u, v)}; // union
+        Union(u, v);
+    }
+}
+``` 
+
+#### Union Find
+##### Logical View
+![Notes-2019-8-5-20-32-33.png](https://raw.githubusercontent.com/Luorinz/images/master/Notes-2019-8-5-20-32-33.png)
+1 2 3 4 5 6 7
+2 2 2 4 4 5 7
+
+
+##### PseudoCode
+```java
+Find(u) {
+    if (parent[u] == u) {
+        return u;
+    }
+    return Find(parent[u]);
+}
+
+Union(u, v) {
+    parent[u] = v;
+}
+Union By Rank
+Notes-2019-8-5-20-46-13.png
+Notes-2019-8-5-20-46-13.png
+
+
+
+/**
+1 2 3 4 5 6 7
+1 2 1 3 2 1 1
+Find O logn Union O 1
+
+num of item >= 2 ^(rank - 1)
+**/
+
+if (rank[u] < rank[v]) {
+    parent[u] = v;
+} else if (rank[u] < rank[v]) {
+    parent[v] = u;
+} else {
+    parent[u] = v;
+    rank[v]++;
+}
+Path Compression
+We dont want a long chain here, we want less levels of nodes. So we modify the parent of the node to be the root each time we find.
+
+Assume for a sequence of m U&F operations.
+overall running time , O(mlog*n).
+
+eg.
+Notes-2019-8-5-21-5-1.png
+Notes-2019-8-5-21-5-1.png
+
+
+log 2 = 1
+log 4 = 2
+log 16 = 3
+log 65536 = 4
+log* 2^65536 = 5
+
+Find(u) {
+    if (parent[u] == u) {
+        return u;
+    }
+    parent[u] = Find(parent[u]);
+    return parent[u];
+}
