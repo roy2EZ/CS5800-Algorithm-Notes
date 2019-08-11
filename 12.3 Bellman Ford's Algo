@@ -1,0 +1,25 @@
+Bellman Ford
+Description
+Relax all edges n-1 times.
+
+Example
+Notes-2019-7-29-21-18-38.png
+Notes-2019-7-29-21-18-38.png
+
+
+
+S = 1
+dist = [0, inf, inf, inf]
+i = 1, we get 2, 3, 4, 1, dist = [0, 3, inf, inf]
+i = 2, we get 2, 3, 4, 1, dist = [0, 3, -7, 0]
+i = 3, dist = [0, 3, -7, 0]
+
+Since we can at least update one true shortest distance at each loop, then we need at most n-1 times to update all true shorteset distances. After that, the dist array shouldn't change. If it changes, it means there's a cycle with negative weights.
+PseudoCOde
+for (i = 1... n-1) {// we do the algo n-1 times
+    for (u = 1...n) {
+        for (V in G.neighbors(u)) {
+            relax(u, v);
+        }
+    }
+}
