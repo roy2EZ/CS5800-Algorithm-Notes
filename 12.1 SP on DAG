@@ -1,0 +1,59 @@
+Class 12 07/29/2019
+Single Source Shortest Path(SSSP)
+Description
+SSSP = single source shortest path
+given Graph, we need to find every shortest path from the source S to other nodes.
+
+Pseudocode
+negative weighted edges| DAG |not DAG |Time |
+|:–:|:–:|:–:|:–:|
+N | SP on DAG, O(m+n) | Dijkstra’s algo| Omlogn(sparse) or O n^2(dense) |
+Y | Same as above | Bellmen Ford |O(mn)|
+
+
+Description
+Given G and s, return a dist[u] which stores the shortest disatnce from s to u.
+
+Shortest Path on DAG
+Description
+input: G(V, E), S
+step:
+0. dist[S] = 0, dist[others] = inf
+1. topological sort
+2. relax the edge(u, v)
+
+Time Complexity O(m+n)
+PseudoCode
+// helper function, check if v is the shortest path given u.
+relax(u, v) {
+    // Cuv = Cost from u to v
+    if (dist[u] + Cuv < dist[v]) {
+        dist[v] = dist[u] + Cuv
+    }
+}
+getShortest(G) {
+    topological_sort = topo_sort(G);
+    dist = [inf ... 0...inf];
+    for (u in topological_sort) {
+        for (v in G.neighbor(u)) {
+            relax(u, v);
+        }
+    }
+    return dist;
+}
+Example
+Notes-2019-7-29-20-11-5.png
+Notes-2019-7-29-20-11-5.png
+
+
+
+topo = [3, 2, 1, 4, 5]
+dist = [inf, inf, 0, inf, inf]
+        -1,   2 , 0, inf, inf           3
+        -1,   2,  0,  3 , inf           2
+        -1,   2,  0,  3 , -3            1
+        -1,   2,  0,  3 , -3            4
+        -1,   2,  0,  3 , -3            5
+Q: Why is Topological sort working?
+dist[u] = min(dist[x] + Cxu, dist[y] + Cyu), Assume x and y is before u. We need to finish all prerequisites before we try to update u, which is sorted by topological sort.
+Dijkstra’s algorithm
